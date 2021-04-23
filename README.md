@@ -3,7 +3,7 @@
 ## Checklist
 - [x] Create new VNET + 1 Subnet
 - [x] Assign Subnet Delegation for Azure NetApp Files
-- [ ] Deploy Azure NetApp files
+- [ ] Register Azure NetApp files (waiting for confirmation email)
 - [ ] Create a snapshot policy for daily snapshot
-- [ ] Deploy 1 standard capacity pool
-- [ ] Deploy 1 volume in that capacity pool
+- [x] Deploy 1 standard capacity pool
+- [x] Deploy 1 volume in that capacity pool
