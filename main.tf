@@ -93,12 +93,28 @@ resource "null_resource" "create_snapshot_polilcy" {
 	$tenantId = "${data.vault_generic_secret.service_principle.data["tenant"]}"
 	$pscredential = New-Object -TypeName System.Management.Automation.PSCredential($spApplicationId,$secspSecret)
 	Connect-AzAccount -ServicePrincipal -Credential $pscredential -Tenant $tenantId
-  $dailySchedule = @{
+  $hourlySchedule = @{        
+      Minute = 30
+      SnapshotsToKeep = 6
+    }
+    $dailySchedule = @{
       Hour = 1
       Minute = 30
       SnapshotsToKeep = 6
-  }
-	New-AzNetAppFilesSnapshotPolicy -ResourceGroupName "${azurerm_resource_group.main.name}" -Location "${var.rg_region}" -AccountName "${azurerm_netapp_account.main.name}" -Name "${var.prefix}_snap_policy" -Enabled -DailySchedule $dailySchedule
+    }
+    $weeklySchedule = @{
+      Minute = 30    
+      Hour = 1		        
+      Day = "Sunday,Monday"
+      SnapshotsToKeep = 6
+    }
+    $monthlySchedule = @{
+      Minute = 30    
+      Hour = 1        
+      DaysOfMonth = "2,11,21"
+      SnapshotsToKeep = 6
+    }
+	New-AzNetAppFilesSnapshotPolicy -ResourceGroupName "${azurerm_resource_group.main.name}" -Location "${var.rg_region}" -AccountName "${azurerm_netapp_account.main.name}" -Name "${var.prefix}_snap_policy" -Enabled -HourlySchedule $hourlySchedule -DailySchedule $dailySchedule -WeeklySchedule $weeklySchedule -MonthlySchedule $monthlySchedule
 	EOT
 	interpreter = ["PowerShell", "-Command"]
   }
