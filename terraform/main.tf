@@ -92,9 +92,6 @@ resource "azurerm_netapp_volume" "main" {
 resource "null_resource" "create_snapshot_polilcy" {
   provisioner "local-exec" {
 	command = <<EOT
-	APP_ID="${data.vault_generic_secret.service_principle.data["appId"]}"
-	PASSWORD="${data.vault_generic_secret.service_principle.data["password"]}"
-	TENANT_ID="${data.vault_generic_secret.service_principle.data["tenant"]}"
   sudo apt-get update
   sudo apt-get install ca-certificates curl apt-transport-https lsb-release gnupg
   curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/microsoft.gpg > /dev/null
@@ -102,7 +99,7 @@ resource "null_resource" "create_snapshot_polilcy" {
   echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" | sudo tee /etc/apt/sources.list.d/azure-cli.list
   sudo apt-get update
   sudo apt-get install azure-cli
-  az login --service-principal --username $APP_ID --password $PASSWORD --tenant $TENANT_ID
+  az login --service-principal --username "${data.vault_generic_secret.service_principle.data["appId"]}" --password "${data.vault_generic_secret.service_principle.data["password"]}" --tenant "${data.vault_generic_secret.service_principle.data["tenant"]}"
   az netappfiles snapshot policy create --snapshot-policy-name "${var.prefix}_snap_policy" --account-name "${azurerm_netapp_account.main.name}" --location "${var.rg_region}" --resource-group "${azurerm_resource_group.main.name}" --daily-hour 14 --enabled true
 	EOT
   interpreter = ["bash"]
