@@ -122,6 +122,6 @@ resource "null_resource" "create_snapshot_polilcy" {
     }
 	New-AzNetAppFilesSnapshotPolicy -ResourceGroupName "${azurerm_resource_group.main.name}" -Location "${var.rg_region}" -AccountName "${azurerm_netapp_account.main.name}" -Name "${var.prefix}_snap_policy" -Enabled -HourlySchedule $hourlySchedule -DailySchedule $dailySchedule -WeeklySchedule $weeklySchedule -MonthlySchedule $monthlySchedule
 	EOT
-	interpreter = ["PowerShell", "-Command"]
+	interpreter = ["pwsh"]
   }
 }
