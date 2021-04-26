@@ -13,7 +13,7 @@ jobs:
       VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
       VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
       ARM_ACCESS_KEY: ${{ secrets.AZURE_TFSTATE_ACCESS_KEY }}
-    runs-on: windows-2016
+    runs-on: ubuntu-latest
     environment: production
  
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
