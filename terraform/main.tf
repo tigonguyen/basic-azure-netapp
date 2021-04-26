@@ -92,9 +92,9 @@ resource "azurerm_netapp_volume" "main" {
 resource "null_resource" "create_snapshot_polilcy" {
   provisioner "local-exec" {
 	command = <<EOT
-	APP_ID=${data.vault_generic_secret.service_principle.data["appId"]}
-	PASSWORD=${data.vault_generic_secret.service_principle.data["password"]}
-	TENANT_ID=${data.vault_generic_secret.service_principle.data["tenant"]}
+	APP_ID = "${data.vault_generic_secret.service_principle.data["appId"]}"
+	PASSWORD = "${data.vault_generic_secret.service_principle.data["password"]}"
+	TENANT_ID = "${data.vault_generic_secret.service_principle.data["tenant"]}"
 
   # Install Azure CLI
   sudo apt-get update
