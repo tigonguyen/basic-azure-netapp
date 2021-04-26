@@ -89,7 +89,6 @@ resource "azurerm_netapp_volume" "main" {
   storage_quota_in_gb = 100
 }
 
-Create NetApp snapshot policy via Powershell
 resource "null_resource" "create_snapshot_polilcy" {
   provisioner "local-exec" {
 	command = <<EOT
