@@ -92,6 +92,7 @@ resource "azurerm_netapp_volume" "main" {
 resource "null_resource" "create_snapshot_polilcy" {
   provisioner "local-exec" {
 	command = <<EOT
+  #!/bin/bash
   apt-get update
   apt-get install ca-certificates curl apt-transport-https lsb-release gnupg
   curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/microsoft.gpg > /dev/null
