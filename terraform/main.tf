@@ -96,7 +96,17 @@ resource "null_resource" "create_snapshot_polilcy" {
 	PASSWORD=${data.vault_generic_secret.service_principle.data["password"]}
 	TENANT_ID=${data.vault_generic_secret.service_principle.data["tenant"]}
 
-  curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+  # Install Azure CLI
+  sudo apt-get update
+  sudo apt-get install ca-certificates curl apt-transport-https lsb-release gnupg
+  curl -sL https://packages.microsoft.com/keys/microsoft.asc |
+    gpg --dearmor |
+    sudo tee /etc/apt/trusted.gpg.d/microsoft.gpg > /dev/null
+  AZ_REPO=$(lsb_release -cs)
+  echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" |
+    sudo tee /etc/apt/sources.list.d/azure-cli.list
+  sudo apt-get update
+  sudo apt-get install azure-cli
 
   az login --service-principal --username $APP_ID --password $PASSWORD --tenant $TENANT_ID
   az netappfiles snapshot policy create --snapshot-policy-name "${var.prefix}_snap_policy" --account-name "${azurerm_netapp_account.main.name}" --location "${var.rg_region}" --resource-group "${azurerm_resource_group.main.name}" --daily-hour 14 --enabled true
