@@ -111,6 +111,5 @@ resource "null_resource" "create_snapshot_polilcy" {
   az login --service-principal --username $APP_ID --password $PASSWORD --tenant $TENANT_ID
   az netappfiles snapshot policy create --snapshot-policy-name "${var.prefix}_snap_policy" --account-name "${azurerm_netapp_account.main.name}" --location "${var.rg_region}" --resource-group "${azurerm_resource_group.main.name}" --daily-hour 14 --enabled true
 	EOT
-	interpreter = ["bash"]
   }
 }
