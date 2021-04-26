@@ -89,39 +89,17 @@ resource "azurerm_netapp_volume" "main" {
   storage_quota_in_gb = 100
 }
 
-# Create NetApp snapshot policy via Powershell
+Create NetApp snapshot policy via Powershell
 resource "null_resource" "create_snapshot_polilcy" {
   provisioner "local-exec" {
 	command = <<EOT
-	$spApplicationId = "${data.vault_generic_secret.service_principle.data["appId"]}"
-	$spSecret = "${data.vault_generic_secret.service_principle.data["password"]}"
-	$secspSecret = ConvertTo-SecureString -String $spSecret -AsPlainText -Force
-	$tenantId = "${data.vault_generic_secret.service_principle.data["tenant"]}"
-	$pscredential = New-Object -TypeName System.Management.Automation.PSCredential($spApplicationId,$secspSecret)
-	Connect-AzAccount -ServicePrincipal -Credential $pscredential -Tenant $tenantId
-  $hourlySchedule = @{        
-      Minute = 30
-      SnapshotsToKeep = 6
-    }
-    $dailySchedule = @{
-      Hour = 1
-      Minute = 30
-      SnapshotsToKeep = 6
-    }
-    $weeklySchedule = @{
-      Minute = 30    
-      Hour = 1		        
-      Day = "Sunday,Monday"
-      SnapshotsToKeep = 6
-    }
-    $monthlySchedule = @{
-      Minute = 30    
-      Hour = 1        
-      DaysOfMonth = "2,11,21"
-      SnapshotsToKeep = 6
-    }
-	New-AzNetAppFilesSnapshotPolicy -ResourceGroupName "${azurerm_resource_group.main.name}" -Location "${var.rg_region}" -AccountName "${azurerm_netapp_account.main.name}" -Name "${var.prefix}_snap_policy" -Enabled -HourlySchedule $hourlySchedule -DailySchedule $dailySchedule -WeeklySchedule $weeklySchedule -MonthlySchedule $monthlySchedule
+	APP_ID = ${data.vault_generic_secret.service_principle.data["appId"]}
+	PASSWORD = ${data.vault_generic_secret.service_principle.data["password"]}
+	TENANT_ID = ${data.vault_generic_secret.service_principle.data["tenant"]}
+
+  az login --service-principal --username $APP_ID --password $PASSWORD --tenant $TENANT_ID
+  az netappfiles snapshot policy create --snapshot-policy-name "${var.prefix}_snap_policy" --account-name "${azurerm_netapp_account.main.name}" --location "${var.rg_region}" --resource-group "${azurerm_resource_group.main.name}" --daily-hour 14 --enabled true
 	EOT
-	interpreter = ["pwsh"]
+	interpreter = ["bash"]
   }
 }
