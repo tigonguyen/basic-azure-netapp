@@ -9,6 +9,12 @@ terraform {
       version = ">=2.46.0"
     }
   }
+  backend "azurerm" {
+    resource_group_name  = "tstate"
+    storage_account_name = "tstatedevops"
+    container_name       = "anfdeployment"
+    key                  = "terraform.tfstate"
+  }
 }
 
 provider "vault" {}
