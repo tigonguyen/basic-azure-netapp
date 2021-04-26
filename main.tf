@@ -125,3 +125,6 @@ resource "null_resource" "create_snapshot_polilcy" {
 	interpreter = ["PowerShell", "-Command"]
   }
 }
+
+
+
